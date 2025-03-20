@@ -1,67 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import styles from './HomePage.module.css'; // Import CSS
 
 // Hình ảnh fallback/placeholder
 const FALLBACK_IMAGE =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Cpath d='M30 40 L50 65 L70 40' stroke='%23999' stroke-width='4' fill='none'/%3E%3Ccircle cx='50' cy='30' r='8' fill='%23999'/%3E%3C/svg%3E";
 
 function HomePage() {
-  // Dữ liệu bài đăng
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      user: {
-        username: "jason_godefroid",
-        avatar: "/api/placeholder/40/40",
-        displayName: "Jason Godefroid",
-      },
-      timeAgo: "1 ngày",
-      content:
-        "First time making toasted ravs from regular ravs last night. Cute story. Dad's wife (who doesn't really cook and is enjoying when i cook) got some groceries and pulled out some ravs and said something like, \"we tried to make some of those fried ravioli that i really liked when we visited st louis, and they didn't turn out. Can you make some?\" So yep, first time I've actually breaded regular ravs and fried them up. \"This is delicious.\" I guess i did a decent job 👨‍🍳",
-      images: ["/api/placeholder/460/340"],
-      likes: 20,
-      comments: 3,
-      hasUserIcon: true,
-    },
-    {
-      id: 2,
-      user: {
-        username: "the964turbopage",
-        avatar: "",
-        displayName: "The 964 Turbo Page",
-      },
-      timeAgo: "3 giờ",
-      content:
-        "Japanese market Rubystone Red Porsche 964 3.3 Turbo in Texas USA 🇺🇸",
-      mentions: ["@rennsport_classics"],
-      images: ["/api/placeholder/220/160", "/api/placeholder/220/160"],
-      likes: 45,
-      comments: 12,
-      hasUserIcon: false,
-      userIconText: "964",
-    },
-  ]);
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/posts");
+        const data = await response.json();
+        
+        if (Array.isArray(data.data)) {
+          setPosts(data.data);
+        } else {
+          console.error("Dữ liệu không phải là mảng:", data);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   // Xử lý lỗi hình ảnh
   const handleImageError = (e) => {
     e.target.src = FALLBACK_IMAGE;
   };
 
-  // Thêm bài đăng mới
-  const addNewPost = (newPost) => {
-    setPosts([newPost, ...posts]);
-  };
-
   return (
-    <div className="flex h-screen bg-white">
-      {/* Main Content */}
-      <div className="flex-1 flex">
-        {/* Feed */}
-          {/* Posts */}
-          <div className="divide-y divide-gray-200">
-            {posts.map((post) => (
-              <Post key={post.id} post={post} onImageError={handleImageError} />
-            ))}
-          </div>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Trang chính</h1>
+      <div className={styles.postsContainer}>
+        {Array.isArray(posts) && posts.map((post) => (
+          <article key={post.post_id} className={styles.post}>
+            <div className={styles.flexContainer}>
+              <img
+                src={post.profile_avatar}
+                alt={`${post.username}'s avatar`}
+                className={styles.avatar}
+                onError={handleImageError}
+              />
+              <div className={styles.contentContainer}>
+                <h3 className={styles.username}>{post.username}</h3>
+                <p className={styles.postContent}>{post.content}</p>
+                <div className={styles.postFooter}>
+                  <span className={styles.likes}>{post.likeAmount} likes</span>
+                  <span className={styles.comments}>3 comments</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   );
@@ -303,7 +297,7 @@ function LoginSidebar() {
     <div className="hidden md:block w-80 p-4">
       <div className="border border-gray-200 rounded-lg p-4">
         <h2 className="font-semibold text-lg">
-          Đăng nhập hoặc đăng ký Threads
+          Đăng nhập hoặc đăng ký Fsocial
         </h2>
         <p className="text-gray-600 text-sm mt-2">
           Xem mọi người đang nói về điều gì và tham gia cuộc trò chuyện.
@@ -323,7 +317,7 @@ function LoginSidebar() {
                 strokeLinecap="round"
               />
             </svg>
-            <span>Tiếp tục bằng Instagram</span>
+            <span>Tiếp tục bằng Google</span>
           </a>
 
           <button className="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">

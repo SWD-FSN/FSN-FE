@@ -55,6 +55,7 @@ function Sidebar() {
     {
       icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
       label: "Profile",
+      link: "/profile",
     },
   ];
 
@@ -145,7 +146,7 @@ function LoginSidebar() {
                 strokeLinecap="round"
               />
             </svg>
-            <span>Tiếp tục bằng Instagram</span>
+            <span>Tiếp tục bằng Google</span>
           </a>
 
           <button className="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
