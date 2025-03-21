@@ -1,21 +1,26 @@
 import React, { useState, useRef } from 'react';
 import { FaUser, FaCamera, FaPen, FaPlus } from 'react-icons/fa';
+import { Box, Typography, Button, TextField, Avatar, IconButton, Paper, Grid } from '@mui/material';
 import styles from './ProfilePage.module.css';
 
 const ProfilePage = () => {
     const [profile, setProfile] = useState({
-        fullName: '',
-        email: '',
-        phone: '',
-        bio: '',
+        fullName: 'Nguyễn Văn A',
+        username: 'nguyenvana',
+        bio: 'Mô tả ngắn về bản thân...',
         avatar: null,
-        skills: [],
-        interests: []
+        coverPhoto: null,
+        posts: [],
+        followers: 120,
+        following: 180,
+        skills: [], // Initialize skills
+        interests: [] // Initialize interests
     });
 
     const [newSkill, setNewSkill] = useState('');
     const [newInterest, setNewInterest] = useState('');
     const fileInputRef = useRef(null);
+    const coverInputRef = useRef(null);
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
@@ -25,6 +30,20 @@ const ProfilePage = () => {
                 setProfile(prev => ({
                     ...prev,
                     avatar: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleCoverChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfile(prev => ({
+                    ...prev,
+                    coverPhoto: reader.result
                 }));
             };
             reader.readAsDataURL(file);
@@ -74,24 +93,44 @@ const ProfilePage = () => {
     };
 
     return (
-        <div className={styles.profilePage}>
-            <div className={styles.container}>
-                <h1>Profile Management</h1>
+        <Box className={styles.profilePage}>
+            <Box className={styles.coverPhotoContainer}>
+                {profile.coverPhoto ? (
+                    <img src={profile.coverPhoto} alt="Cover" className={styles.coverPhoto} />
+                ) : (
+                    <Box className={styles.coverPhotoPlaceholder}></Box>
+                )}
+                <Button
+                    className={styles.uploadCoverButton}
+                    onClick={() => coverInputRef.current.click()}
+                >
+                    <FaCamera /> Thay đổi ảnh bìa
+                </Button>
+                <input
+                    type="file"
+                    ref={coverInputRef}
+                    onChange={handleCoverChange}
+                    accept="image/*"
+                    hidden
+                />
+            </Box>
 
-                {/* Avatar Section */}
-                <div className={styles.avatarSection}>
-                    <div className={styles.avatarContainer}>
+            <Box className={styles.container}>
+                <Box className={styles.avatarSection}>
+                    <Box className={styles.avatarContainer}>
                         {profile.avatar ? (
-                            <img src={profile.avatar} alt="Profile" className={styles.avatar} />
+                            <Avatar src={profile.avatar} alt="Profile" className={styles.avatar} />
                         ) : (
-                            <FaUser className={styles.avatarPlaceholder} />
+                            <Avatar className={styles.avatarPlaceholder}>
+                                <FaUser />
+                            </Avatar>
                         )}
-                        <button 
+                        <IconButton
                             className={styles.uploadButton}
                             onClick={() => fileInputRef.current.click()}
                         >
                             <FaCamera />
-                        </button>
+                        </IconButton>
                         <input
                             type="file"
                             ref={fileInputRef}
@@ -99,102 +138,85 @@ const ProfilePage = () => {
                             accept="image/*"
                             hidden
                         />
-                    </div>
-                </div>
+                    </Box>
+                    <Typography variant="h5">{profile.fullName}</Typography>
+                    <Typography variant="subtitle1">@{profile.username}</Typography>
+                </Box>
 
-                {/* Personal Information Section */}
-                <section className={styles.section}>
-                    <h2>Thông tin cá nhân</h2>
-                    <div className={styles.formGroup}>
-                        <label>Họ và tên</label>
-                        <input
-                            type="text"
-                            name="fullName"
-                            value={profile.fullName}
-                            onChange={handleInputChange}
-                            placeholder="Nhập họ và tên"
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={profile.email}
-                            onChange={handleInputChange}
-                            placeholder="Nhập email"
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Số điện thoại</label>
-                        <input
-                            type="tel"
-                            name="phone"
-                            value={profile.phone}
-                            onChange={handleInputChange}
-                            placeholder="Nhập số điện thoại"
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Giới thiệu bản thân</label>
-                        <textarea
-                            name="bio"
-                            value={profile.bio}
-                            onChange={handleInputChange}
-                            placeholder="Viết vài điều về bản thân..."
-                            rows="4"
-                        />
-                    </div>
-                </section>
+                <Box className={styles.statsSection}>
+                    <Typography variant="body1">Bài đăng: {profile.posts.length}</Typography>
+                    <Typography variant="body1">Người theo dõi: {profile.followers}</Typography>
+                    <Typography variant="body1">Đang theo dõi: {profile.following}</Typography>
+                </Box>
 
-                {/* Skills Section */}
-                <section className={styles.section}>
-                    <h2>Kỹ năng</h2>
-                    <div className={styles.tagInput}>
-                        <input
-                            type="text"
+                <Box className={styles.bioSection}>
+                    <Typography variant="h6">Tiểu sử</Typography>
+                    <Typography variant="body1">{profile.bio}</Typography>
+                </Box>
+
+                <Box className={styles.postsSection}>
+                    <Typography variant="h6">Bài đăng</Typography>
+                    {profile.posts.length > 0 ? (
+                        profile.posts.map((post, index) => (
+                            <Paper key={index} className={styles.post}>
+                                <Typography variant="body1">{post.content}</Typography>
+                            </Paper>
+                        ))
+                    ) : (
+                        <Typography variant="body1">Chưa có bài đăng nào.</Typography>
+                    )}
+                </Box>
+
+                <Box className={styles.skillsSection}>
+                    <Typography variant="h6">Kỹ năng</Typography>
+                    <Box className={styles.tagInput}>
+                        <TextField
                             value={newSkill}
                             onChange={(e) => setNewSkill(e.target.value)}
                             placeholder="Thêm kỹ năng mới"
+                            variant="outlined"
+                            size="small"
                         />
-                        <button onClick={addSkill}><FaPlus /></button>
-                    </div>
-                    <div className={styles.tags}>
+                        <Button onClick={addSkill}><FaPlus /></Button>
+                    </Box>
+                    <Box className={styles.tags}>
                         {profile.skills.map((skill, index) => (
-                            <span key={index} className={styles.tag}>
+                            <Box key={index} className={styles.tag}>
                                 {skill}
-                                <button onClick={() => removeSkill(index)}>×</button>
-                            </span>
+                                <Button onClick={() => removeSkill(index)}>×</Button>
+                            </Box>
                         ))}
-                    </div>
-                </section>
+                    </Box>
+                </Box>
 
-                {/* Interests Section */}
-                <section className={styles.section}>
-                    <h2>Sở thích</h2>
-                    <div className={styles.tagInput}>
-                        <input
-                            type="text"
+                <Box className={styles.interestsSection}>
+                    <Typography variant="h6">Sở thích</Typography>
+                    <Box className={styles.tagInput}>
+                        <TextField
                             value={newInterest}
                             onChange={(e) => setNewInterest(e.target.value)}
                             placeholder="Thêm sở thích mới"
+                            variant="outlined"
+                            size="small"
                         />
-                        <button onClick={addInterest}><FaPlus /></button>
-                    </div>
-                    <div className={styles.tags}>
+                        <Button onClick={addInterest}><FaPlus /></Button>
+                    </Box>
+                    <Box className={styles.tags}>
                         {profile.interests.map((interest, index) => (
-                            <span key={index} className={styles.tag}>
+                            <Box key={index} className={styles.tag}>
                                 {interest}
-                                <button onClick={() => removeInterest(index)}>×</button>
-                            </span>
+                                <Button onClick={() => removeInterest(index)}>×</Button>
+                            </Box>
                         ))}
-                    </div>
-                </section>
+                    </Box>
+                </Box>
 
-                <button className={styles.saveButton}>Lưu thay đổi</button>
-            </div>
-        </div>
+                <Button className={styles.saveButton} variant="contained" color="primary">
+                    Lưu thay đổi
+                </Button>
+            </Box>
+        </Box>
     );
 };
 
-export default ProfilePage; 
+export default ProfilePage;

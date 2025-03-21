@@ -1,69 +1,59 @@
 .loginPage {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #74b9ff, #0984e3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
 }
 
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .loginContainer {
-    background: white;
-    border-radius: 32px;
-    padding: 40px;
-    width: 100%;
-    max-width: 484px;
-    position: relative;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    animation: slideUp 0.5s ease-out;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  animation: slideUp 0.5s ease-out;
 }
 
 @keyframes slideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .closeButton {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-}
-
-.closeButton:hover {
-    background-color: #f0f0f0;
-    transform: rotate(90deg);
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .logo {
-    width: 40px;
-    margin: 0 auto 20px;
-    display: block;
-    animation: bounce 1s ease;
+  display: block;
+  margin: 0 auto 20px;
+  width: 100px;
+  height: auto;
 }
 
 @keyframes bounce {
@@ -79,151 +69,139 @@
 }
 
 .title {
-    text-align: center;
-    font-size: 32px;
-    margin-bottom: 24px;
-    color: #111;
-    font-weight: 600;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #333;
+  font-weight: bold;
 }
 
 .loginForm {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .inputGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  margin-bottom: 20px;
 }
 
 .inputGroup label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
 }
 
 .input {
-    padding: 14px 16px;
-    border: 2px solid #e0e0e0;
-    border-radius: 16px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    background-color: #f8f9fa;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .input:focus {
-    outline: none;
-    border-color: #0066ff;
-    box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.1);
-    background-color: white;
+  outline: none;
+  border-color: #6e8efb;
+  box-shadow: 0 0 0 4px rgba(110, 142, 251, 0.2);
 }
 
 .forgotPassword {
-    text-align: right;
+  text-align: right;
+  margin-bottom: 20px;
 }
 
 .forgotPassword a {
-    color: #111;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.2s ease;
+  color: #007bff;
+  text-decoration: none;
 }
 
 .forgotPassword a:hover {
-    color: #0066ff;
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .loginButton {
-    background-color: #e60023;
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 24px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  padding: 12px;
+  background-color: #6e8efb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .loginButton:hover {
-    background-color: #ad081b;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(230, 0, 35, 0.3);
+  background-color: #5a75e5;
 }
 
 .loginButton:active {
-    transform: translateY(0);
+  transform: translateY(2px);
 }
 
 .divider {
-    text-align: center;
-    position: relative;
-    margin: 24px 0;
-    color: #666;
-    font-size: 14px;
+  text-align: center;
+  margin: 20px 0;
+  color: #aaa;
+  position: relative;
 }
 
 .divider::before,
 .divider::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    width: 45%;
-    height: 1px;
-    background-color: #e0e0e0;
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: #e0e0e0;
 }
 
 .divider::before {
-    left: 0;
+  left: 0;
 }
 
 .divider::after {
-    right: 0;
+  right: 0;
 }
 
 .googleButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    background-color: #fff;
-    border: 2px solid #e0e0e0;
-    padding: 14px;
-    border-radius: 24px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .googleButton:hover {
-    background-color: #f8f9fa;
-    border-color: #0066ff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #f0f0f0;
 }
 
 .googleButton:active {
-    transform: translateY(0);
+  transform: translateY(2px);
+}
+
+.googleButton span {
+  margin-left: 8px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 520px) {
-    .loginContainer {
-        margin: 20px;
-        padding: 30px 20px;
-    }
+  .loginContainer {
+    margin: 20px;
+    padding: 30px 20px;
+  }
 
-    .title {
-        font-size: 24px;
-    }
+  .title {
+    font-size: 24px;
+  }
 
-    .input, .loginButton, .googleButton {
-        padding: 12px;
-    }
+  .input, .loginButton, .googleButton {
+    padding: 12px;
+  }
 }

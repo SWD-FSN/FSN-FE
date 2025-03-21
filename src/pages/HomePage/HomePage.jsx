@@ -34,7 +34,7 @@ function HomePage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Trang chính</h1>
+      <h1 className={styles.title}>have a good day</h1>
       <div className={styles.postsContainer}>
         {Array.isArray(posts) && posts.map((post) => (
           <article key={post.post_id} className={styles.post}>
