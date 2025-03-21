@@ -4,6 +4,9 @@ import { IoMdClose } from 'react-icons/io';
 import { auth, googleProvider } from '../../firebase';
 import { signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import BlurText from "../../blocks/TextAnimations/BlurText/BlurText";
+import GradientText from "../../blocks/TextAnimations/GradientText/GradientText";
+import Iridescence from "../../blocks/Backgrounds/Iridescence/Iridescence.jsx";
 import FsocialLogo from '../../assets/images/Fsocial.jpg';
 import BackgroundImage from '../../assets/images/loginpicture.jpg'; // Import your local image
 import {
@@ -16,6 +19,10 @@ import {
   IconButton,
   Paper,
 } from '@mui/material';
+
+const handleAnimationComplete = () => {
+  console.log('Animation completed!');
+};
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -129,48 +136,31 @@ const LoginPage = () => {
           overflow: 'hidden',
         }}
       >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: `url(${BackgroundImage})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'blur(8px)',
-            zIndex: -1,
-          }}
+        <Iridescence
+          color={[1, 1, 1]}
+          mouseReact={false}
+          amplitude={0.1}
+          speed={1.0}
+          sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: -1 }}
         />
-        <Box>
-          <Typography
-            variant="h3"
-            component="h1"
-            gutterBottom
-            sx={{
-              color: 'white',
-              fontWeight: 'bold',
-              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
-              animation: 'fadeIn 2s ease-in-out',
-            }}
-          >
-            Welcome to Fsocial network
-          </Typography>
-          <Typography
-            variant="h6"
-            component="p"
-            sx={{
-              color: 'white',
-              textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
-              animation: 'fadeIn 2s ease-in-out',
-            }}
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
+          <BlurText
+            text="wellcome to Fsocial network"
+            delay={150}
+            animateBy="words"
+            direction="top"
+            onAnimationComplete={handleAnimationComplete}
+            className="text-4xl mb-8"
+            style={{ color: 'black' }} // Set text color to black
+          />
+          <GradientText
+            colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
+            animationSpeed={3}
+            showBorder={false}
+            className="custom-class"
           >
             This is a social networking site for students organized by the group of 7 SWD392 subjects of Mr. CHIENNV
-          </Typography>
+          </GradientText>
         </Box>
       </Box>
     </Box>
