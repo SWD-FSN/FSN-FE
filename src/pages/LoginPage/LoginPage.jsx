@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import BlurText from "./BlurText";
 import { FcGoogle } from 'react-icons/fc';
 import { IoMdClose } from 'react-icons/io';
 import { auth, googleProvider } from '../../firebase';
