@@ -1,34 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import HomePage from '../pages/HomePage/HomePage';
 import LoginPage from '../pages/LoginPage/LoginPage';
-import '../index.css'; // Import CSS nếu cần
-import { createBrowserRouter } from 'react-router-dom';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import SearchPage from '../pages/SearchPage/SearchPage';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import ChatPage from '../pages/ChatPage/ChatPage';
+import ProfileSettings from '../pages/ProfileSettings/ProfileSettings';
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-
-root.render(
-  <Router>
-    <Routes>
-      <Route path="/" element={<LoginPage />} />
-      <Route path="/home" element={<HomePage />} />
-    </Routes>
-  </Router>
-);
-
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
+    element: <LoginPage />,
+  },
+  {
+    path: "/home",
     element: (
       <DefaultLayout headerTitle="Trang chủ">
         <HomePage />
-        
       </DefaultLayout>
     ),
   },
@@ -49,15 +37,11 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
     path: "/profile",
     element: <ProfilePage />,
   },
-
-  // Thêm các route khác ở đây
+  {
+    path: "/profile-settings",
+    element: <ProfileSettings />,
+  },
 ]);
-
-export default router;
