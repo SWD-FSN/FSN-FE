@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { FaUser, FaCamera } from 'react-icons/fa';
-import { Box, Typography, Button, Avatar, IconButton, Paper, Grid, Divider } from '@mui/material';
+import { Box, Typography, Avatar, IconButton, Paper, Grid, Button } from '@mui/material';
 import styles from './ProfilePage.module.css';
 
 const ProfilePage = () => {
@@ -8,7 +8,6 @@ const ProfilePage = () => {
         fullName: 'Alexandra Johnson',
         major: 'Computer Science Major',
         avatar: null,
-        coverPhoto: null,
         activityStatus: 'Last active: 2 hours ago',
         recentPosts: [
             { title: 'Exploring AI Techniques', date: 'October 15, 2023', content: 'Just attended a fascinating workshop on AI and machine learning. Learned a lot about the latest trends...' },
@@ -42,6 +41,7 @@ const ProfilePage = () => {
 
     return (
         <Box className={styles.profilePage}>
+            {/* Header */}
             <Box className={styles.header}>
                 <Typography variant="h4" className={styles.logo}>StudentProfileHub</Typography>
                 <Box className={styles.nav}>
@@ -50,20 +50,23 @@ const ProfilePage = () => {
                     <Typography variant="body1">Settings</Typography>
                 </Box>
             </Box>
+
             <Box className={styles.container}>
+                {/* Left Column */}
                 <Box className={styles.leftColumn}>
                     <Box className={styles.profileSection}>
+                        {/* Avatar */}
                         <Box className={styles.avatarContainer}>
-                            {profile.avatar ? (
-                                <Avatar src={profile.avatar} alt="Profile" className={styles.avatar} />
-                            ) : (
-                                <Avatar className={styles.avatarPlaceholder}>
-                                    <FaUser />
-                                </Avatar>
-                            )}
+                            <Avatar
+                                src={profile.avatar || ""}
+                                alt="Profile"
+                                sx={{ width: 120, height: 120, bgcolor: profile.avatar ? "transparent" : "gray" }}
+                            >
+                                {!profile.avatar && <FaUser size={50} />}
+                            </Avatar>
                             <IconButton
-                                className={styles.uploadButton}
-                                onClick={() => fileInputRef.current.click()}
+                                sx={{ position: "absolute", bottom: 5, right: 5, bgcolor: "white" }}
+                                onClick={() => fileInputRef.current && fileInputRef.current.click()}
                             >
                                 <FaCamera />
                             </IconButton>
@@ -75,49 +78,60 @@ const ProfilePage = () => {
                                 hidden
                             />
                         </Box>
+
                         <Typography variant="h5">{profile.fullName}</Typography>
                         <Typography variant="subtitle1">{profile.major}</Typography>
-                        <Box className={styles.profileButtons}>
-                            <Button variant="contained" color="primary">Edit Profile</Button>
-                            <Button variant="contained" color="primary">Update Picture</Button>
-                            <Button variant="contained" color="primary">Privacy Settings</Button>
+
+                        {/* Buttons */}
+                        <Box sx={{ display: 'flex', gap: 2, marginTop: 2 }}>
+                            <Button variant="contained" color="primary" href="profile-settings">Edit Profile</Button>
+                            <Button variant="contained" color="primary" href="#">Update Picture</Button>
+                            <Button variant="contained" color="primary" href="#">Privacy Settings</Button>
                         </Box>
                     </Box>
+
+                    {/* Activity Status */}
                     <Box className={styles.activityStatus}>
                         <Typography variant="h6">Activity Status</Typography>
                         <Typography variant="body2">{profile.activityStatus}</Typography>
                     </Box>
                 </Box>
+
+                {/* Right Column */}
                 <Box className={styles.rightColumn}>
+                    {/* Recent Posts */}
                     <Box className={styles.recentPosts}>
                         <Typography variant="h6">Recent Posts</Typography>
                         {profile.recentPosts.map((post, index) => (
-                            <Paper key={index} className={styles.post}>
+                            <Paper key={index} sx={{ padding: 2, marginBottom: 2 }}>
                                 <Typography variant="h6">{post.title}</Typography>
                                 <Typography variant="body2">{post.date}</Typography>
                                 <Typography variant="body1">{post.content}</Typography>
                             </Paper>
                         ))}
                     </Box>
+
+                    {/* Friends List */}
                     <Box className={styles.friendsList}>
                         <Typography variant="h6">Friends List</Typography>
                         <Grid container spacing={2}>
                             {profile.friendsList.map((friend, index) => (
                                 <Grid item xs={4} key={index}>
-                                    <Box className={styles.friend}>
-                                        {friend.avatar ? (
-                                            <Avatar src={friend.avatar} alt={friend.name} className={styles.friendAvatar} />
-                                        ) : (
-                                            <Avatar className={styles.friendAvatarPlaceholder}>
-                                                <FaUser />
-                                            </Avatar>
-                                        )}
+                                    <Box sx={{ textAlign: "center" }}>
+                                        <Avatar
+                                            src={friend.avatar || ""}
+                                            sx={{ width: 60, height: 60, bgcolor: friend.avatar ? "transparent" : "gray" }}
+                                        >
+                                            {!friend.avatar && <FaUser />}
+                                        </Avatar>
                                         <Typography variant="body1">{friend.name}</Typography>
                                     </Box>
                                 </Grid>
                             ))}
                         </Grid>
                     </Box>
+
+                    {/* Stats Section */}
                     <Box className={styles.stats}>
                         <Box className={styles.stat}>
                             <Typography variant="h6">Groups Joined</Typography>
