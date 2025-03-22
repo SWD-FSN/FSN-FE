@@ -1,26 +1,30 @@
 import React, { useState, useRef } from 'react';
-import { FaUser, FaCamera, FaPen, FaPlus } from 'react-icons/fa';
-import { Box, Typography, Button, TextField, Avatar, IconButton, Paper, Grid } from '@mui/material';
+import { FaUser, FaCamera } from 'react-icons/fa';
+import { Box, Typography, Button, Avatar, IconButton, Paper, Grid, Divider } from '@mui/material';
 import styles from './ProfilePage.module.css';
 
 const ProfilePage = () => {
     const [profile, setProfile] = useState({
-        fullName: 'Nguyễn Văn A',
-        username: 'nguyenvana',
-        bio: 'Mô tả ngắn về bản thân...',
+        fullName: 'Alexandra Johnson',
+        major: 'Computer Science Major',
         avatar: null,
         coverPhoto: null,
-        posts: [],
-        followers: 120,
-        following: 180,
-        skills: [], // Initialize skills
-        interests: [] // Initialize interests
+        activityStatus: 'Last active: 2 hours ago',
+        recentPosts: [
+            { title: 'Exploring AI Techniques', date: 'October 15, 2023', content: 'Just attended a fascinating workshop on AI and machine learning. Learned a lot about the latest trends...' },
+            { title: 'Joined New Coding Group', date: 'October 10, 2023', content: 'Excited to join the "Code Masters" group. Looking forward to collaborating on exciting projects...' }
+        ],
+        friendsList: [
+            { name: 'Emily Carter', avatar: null },
+            { name: 'Michael Brown', avatar: null },
+            { name: 'Sarah Lee', avatar: null }
+        ],
+        groupsJoined: 5,
+        eventsFollowed: 3,
+        opportunitiesFound: 2
     });
 
-    const [newSkill, setNewSkill] = useState('');
-    const [newInterest, setNewInterest] = useState('');
     const fileInputRef = useRef(null);
-    const coverInputRef = useRef(null);
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
@@ -36,184 +40,99 @@ const ProfilePage = () => {
         }
     };
 
-    const handleCoverChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setProfile(prev => ({
-                    ...prev,
-                    coverPhoto: reader.result
-                }));
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setProfile(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const addSkill = () => {
-        if (newSkill.trim()) {
-            setProfile(prev => ({
-                ...prev,
-                skills: [...prev.skills, newSkill.trim()]
-            }));
-            setNewSkill('');
-        }
-    };
-
-    const addInterest = () => {
-        if (newInterest.trim()) {
-            setProfile(prev => ({
-                ...prev,
-                interests: [...prev.interests, newInterest.trim()]
-            }));
-            setNewInterest('');
-        }
-    };
-
-    const removeSkill = (indexToRemove) => {
-        setProfile(prev => ({
-            ...prev,
-            skills: prev.skills.filter((_, index) => index !== indexToRemove)
-        }));
-    };
-
-    const removeInterest = (indexToRemove) => {
-        setProfile(prev => ({
-            ...prev,
-            interests: prev.interests.filter((_, index) => index !== indexToRemove)
-        }));
-    };
-
     return (
         <Box className={styles.profilePage}>
-            <Box className={styles.coverPhotoContainer}>
-                {profile.coverPhoto ? (
-                    <img src={profile.coverPhoto} alt="Cover" className={styles.coverPhoto} />
-                ) : (
-                    <Box className={styles.coverPhotoPlaceholder}></Box>
-                )}
-                <Button
-                    className={styles.uploadCoverButton}
-                    onClick={() => coverInputRef.current.click()}
-                >
-                    <FaCamera /> Thay đổi ảnh bìa
-                </Button>
-                <input
-                    type="file"
-                    ref={coverInputRef}
-                    onChange={handleCoverChange}
-                    accept="image/*"
-                    hidden
-                />
+            <Box className={styles.header}>
+                <Typography variant="h4" className={styles.logo}>StudentProfileHub</Typography>
+                <Box className={styles.nav}>
+                    <Typography variant="body1">Profile Overview</Typography>
+                    <Typography variant="body1">Messaging</Typography>
+                    <Typography variant="body1">Settings</Typography>
+                </Box>
             </Box>
-
             <Box className={styles.container}>
-                <Box className={styles.avatarSection}>
-                    <Box className={styles.avatarContainer}>
-                        {profile.avatar ? (
-                            <Avatar src={profile.avatar} alt="Profile" className={styles.avatar} />
-                        ) : (
-                            <Avatar className={styles.avatarPlaceholder}>
-                                <FaUser />
-                            </Avatar>
-                        )}
-                        <IconButton
-                            className={styles.uploadButton}
-                            onClick={() => fileInputRef.current.click()}
-                        >
-                            <FaCamera />
-                        </IconButton>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleAvatarChange}
-                            accept="image/*"
-                            hidden
-                        />
+                <Box className={styles.leftColumn}>
+                    <Box className={styles.profileSection}>
+                        <Box className={styles.avatarContainer}>
+                            {profile.avatar ? (
+                                <Avatar src={profile.avatar} alt="Profile" className={styles.avatar} />
+                            ) : (
+                                <Avatar className={styles.avatarPlaceholder}>
+                                    <FaUser />
+                                </Avatar>
+                            )}
+                            <IconButton
+                                className={styles.uploadButton}
+                                onClick={() => fileInputRef.current.click()}
+                            >
+                                <FaCamera />
+                            </IconButton>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleAvatarChange}
+                                accept="image/*"
+                                hidden
+                            />
+                        </Box>
+                        <Typography variant="h5">{profile.fullName}</Typography>
+                        <Typography variant="subtitle1">{profile.major}</Typography>
+                        <Box className={styles.profileButtons}>
+                            <Button variant="contained" color="primary">Edit Profile</Button>
+                            <Button variant="contained" color="primary">Update Picture</Button>
+                            <Button variant="contained" color="primary">Privacy Settings</Button>
+                        </Box>
                     </Box>
-                    <Typography variant="h5">{profile.fullName}</Typography>
-                    <Typography variant="subtitle1">@{profile.username}</Typography>
+                    <Box className={styles.activityStatus}>
+                        <Typography variant="h6">Activity Status</Typography>
+                        <Typography variant="body2">{profile.activityStatus}</Typography>
+                    </Box>
                 </Box>
-
-                <Box className={styles.statsSection}>
-                    <Typography variant="body1">Bài đăng: {profile.posts.length}</Typography>
-                    <Typography variant="body1">Người theo dõi: {profile.followers}</Typography>
-                    <Typography variant="body1">Đang theo dõi: {profile.following}</Typography>
-                </Box>
-
-                <Box className={styles.bioSection}>
-                    <Typography variant="h6">Tiểu sử</Typography>
-                    <Typography variant="body1">{profile.bio}</Typography>
-                </Box>
-
-                <Box className={styles.postsSection}>
-                    <Typography variant="h6">Bài đăng</Typography>
-                    {profile.posts.length > 0 ? (
-                        profile.posts.map((post, index) => (
+                <Box className={styles.rightColumn}>
+                    <Box className={styles.recentPosts}>
+                        <Typography variant="h6">Recent Posts</Typography>
+                        {profile.recentPosts.map((post, index) => (
                             <Paper key={index} className={styles.post}>
+                                <Typography variant="h6">{post.title}</Typography>
+                                <Typography variant="body2">{post.date}</Typography>
                                 <Typography variant="body1">{post.content}</Typography>
                             </Paper>
-                        ))
-                    ) : (
-                        <Typography variant="body1">Chưa có bài đăng nào.</Typography>
-                    )}
-                </Box>
-
-                <Box className={styles.skillsSection}>
-                    <Typography variant="h6">Kỹ năng</Typography>
-                    <Box className={styles.tagInput}>
-                        <TextField
-                            value={newSkill}
-                            onChange={(e) => setNewSkill(e.target.value)}
-                            placeholder="Thêm kỹ năng mới"
-                            variant="outlined"
-                            size="small"
-                        />
-                        <Button onClick={addSkill}><FaPlus /></Button>
-                    </Box>
-                    <Box className={styles.tags}>
-                        {profile.skills.map((skill, index) => (
-                            <Box key={index} className={styles.tag}>
-                                {skill}
-                                <Button onClick={() => removeSkill(index)}>×</Button>
-                            </Box>
                         ))}
                     </Box>
-                </Box>
-
-                <Box className={styles.interestsSection}>
-                    <Typography variant="h6">Sở thích</Typography>
-                    <Box className={styles.tagInput}>
-                        <TextField
-                            value={newInterest}
-                            onChange={(e) => setNewInterest(e.target.value)}
-                            placeholder="Thêm sở thích mới"
-                            variant="outlined"
-                            size="small"
-                        />
-                        <Button onClick={addInterest}><FaPlus /></Button>
+                    <Box className={styles.friendsList}>
+                        <Typography variant="h6">Friends List</Typography>
+                        <Grid container spacing={2}>
+                            {profile.friendsList.map((friend, index) => (
+                                <Grid item xs={4} key={index}>
+                                    <Box className={styles.friend}>
+                                        {friend.avatar ? (
+                                            <Avatar src={friend.avatar} alt={friend.name} className={styles.friendAvatar} />
+                                        ) : (
+                                            <Avatar className={styles.friendAvatarPlaceholder}>
+                                                <FaUser />
+                                            </Avatar>
+                                        )}
+                                        <Typography variant="body1">{friend.name}</Typography>
+                                    </Box>
+                                </Grid>
+                            ))}
+                        </Grid>
                     </Box>
-                    <Box className={styles.tags}>
-                        {profile.interests.map((interest, index) => (
-                            <Box key={index} className={styles.tag}>
-                                {interest}
-                                <Button onClick={() => removeInterest(index)}>×</Button>
-                            </Box>
-                        ))}
+                    <Box className={styles.stats}>
+                        <Box className={styles.stat}>
+                            <Typography variant="h6">Groups Joined</Typography>
+                            <Typography variant="body1">{profile.groupsJoined} Groups</Typography>
+                        </Box>
+                        <Box className={styles.stat}>
+                            <Typography variant="h6">Events Followed</Typography>
+                            <Typography variant="body1">{profile.eventsFollowed} Events</Typography>
+                        </Box>
+                        <Box className={styles.stat}>
+                            <Typography variant="h6">Opportunities Found</Typography>
+                            <Typography variant="body1">{profile.opportunitiesFound} Opportunities</Typography>
+                        </Box>
                     </Box>
                 </Box>
-
-                <Button className={styles.saveButton} variant="contained" color="primary">
-                    Lưu thay đổi
-                </Button>
             </Box>
         </Box>
     );

@@ -3,15 +3,33 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: #15202b;
-  color: white;
+  background-color: #f5f5f5;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #000;
+  color: #fff;
+}
+
+.logo {
+  font-weight: bold;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
 }
 
 .coverPhotoContainer {
   width: 100%;
-  height: 300px;
+  height: 200px;
   position: relative;
-  background-color: #192734;
+  background-color: #f0f0f0;
 }
 
 .coverPhoto {
@@ -23,7 +41,7 @@
 .coverPhotoPlaceholder {
   width: 100%;
   height: 100%;
-  background-color: #192734;
+  background-color: #e0e0e0;
 }
 
 .uploadCoverButton {
@@ -36,12 +54,24 @@
 
 .container {
   width: 100%;
-  max-width: 800px;
-  margin-top: -50px;
-  background-color: #192734;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin-top: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.leftColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rightColumn {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 h1 {
@@ -102,19 +132,16 @@ h1::after {
 }
 
 .avatar {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #15202b;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .avatarPlaceholder {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  background-color: #192734;
+  background-color: #e0e0e0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,7 +236,7 @@ h1::after {
 }
 
 .tag {
-  background-color: #192734;
+  background-color: #f0f0f0;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -315,4 +342,75 @@ h1::after {
 .skillsSection,
 .interestsSection {
   margin-bottom: 20px;
+}
+
+.infoSection {
+  margin-bottom: 20px;
+}
+
+.availabilitySection {
+  margin-bottom: 20px;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profileButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.activityStatus, .recentPosts, .friendsList, .stats {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post {
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.friend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.friendAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.friendAvatarPlaceholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  color: #a0a0a0;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
