@@ -1,36 +1,66 @@
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import Footer from '../footer/Footer';
 
 function DefaultLayout({children, headerTitle}) {
+    const [showCreatePostForm, setShowCreatePostForm] = useState(false);
+
+    const handleCreateClick = () => {
+        setShowCreatePostForm(true);
+    };
+
+    const handleCloseForm = () => {
+        setShowCreatePostForm(false);
+    };
+
     return (
-      <div className="flex h-screen bg-white">
-        {/* Sidebar */}
-        <Sidebar />
+      <div className="flex flex-col h-screen bg-white">
+        <div className="flex flex-1">
+          {/* Sidebar */}
+          <Sidebar onCreateClick={handleCreateClick} />
 
-        {/* Main Content */}
-        <div className="flex-1 flex">
-          {/* Feed */}
-          <div className="flex-1 border-r border-gray-200 overflow-y-auto">
-            {headerTitle && (
-              <header className="sticky top-0 bg-white p-4 border-b border-gray-200 z-10">
-                <h1 className="text-xl font-semibold text-center">
-                  {headerTitle}
-                </h1>
-              </header>
-            )}
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col">
+            {/* Feed */}
+            <div className="flex-1 border-r border-gray-200 overflow-y-auto">
+              {headerTitle && (
+                <header className="sticky top-0 bg-white p-4 border-b border-gray-200 z-10">
+                  <h1 className="text-xl font-semibold text-center">
+                    {headerTitle}
+                  </h1>
+                </header>
+              )}
 
-            {/* Posts */}
-            {children}
+              {/* Posts */}
+              {children}
+            </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Login Sidebar */}
           <LoginSidebar />
         </div>
+
+        {/* Footer */}
+        <Footer />
+
+        {/* Create Post Form */}
+        {showCreatePostForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-4 rounded-lg shadow-lg">
+              <h2 className="text-xl font-semibold mb-4">Create Post</h2>
+              <textarea className="w-full p-2 border border-gray-300 rounded-lg mb-4" rows="4" placeholder="What's on your mind?"></textarea>
+              <div className="flex justify-end space-x-2">
+                <button onClick={handleCloseForm} className="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
+                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg">Post</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
 }
 
-
-function Sidebar() {
+function Sidebar({ onCreateClick }) {
   const navItems = [
     {
       icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
@@ -47,7 +77,11 @@ function Sidebar() {
       label: "Message",
       link: "/message",
     },
-    { icon: "M12 4v16m8-8H4", label: "Create" },
+    { 
+      icon: "M12 4v16m8-8H4", 
+      label: "Create",
+      onClick: onCreateClick,
+    },
     {
       icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
       label: "Likes",
@@ -77,6 +111,7 @@ function Sidebar() {
             className="p-2 hover:bg-gray-100 rounded-md"
             title={item.label}
             to={item.link || "#"}
+            onClick={item.onClick}
           >
             <svg
               className="w-6 h-6"
