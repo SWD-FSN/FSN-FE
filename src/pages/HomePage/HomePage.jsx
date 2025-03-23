@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from './HomePage.module.css'; // Import CSS
 
-
 // Hình ảnh fallback/placeholder
 const FALLBACK_IMAGE =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Cpath d='M30 40 L50 65 L70 40' stroke='%23999' stroke-width='4' fill='none'/%3E%3Ccircle cx='50' cy='30' r='8' fill='%23999'/%3E%3C/svg%3E";
@@ -35,7 +34,7 @@ function HomePage() {
 
   return (
     <div className={styles.container}>
-     
+      
       <div className={styles.postsContainer}>
         {Array.isArray(posts) && posts.map((post) => (
           <article key={post.post_id} className={styles.post}>
@@ -58,7 +57,6 @@ function HomePage() {
           </article>
         ))}
       </div>
-      
     </div>
   );
 }
