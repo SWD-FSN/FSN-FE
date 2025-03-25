@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoMdClose } from "react-icons/io";
 import { auth, googleProvider } from "../../firebase";
@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import BlurText from "../../blocks/TextAnimations/BlurText/BlurText";
 import GradientText from "../../blocks/TextAnimations/GradientText/GradientText";
 import Iridescence from "../../blocks/Backgrounds/Iridescence/Iridescence.jsx";
-import FsocialLogo from "../../assets/images/Fsocial.jpg";
-import BackgroundImage from "../../assets/images/loginpicture.jpg"; // Import your local image
+import FsocialLogo from "../../assets/images/f_social.jpg";
+import BackgroundImage from "../../assets/images/login_picture.jpg"; // Import your local image
 import {
   Container,
   Box,
@@ -19,7 +19,6 @@ import {
   IconButton,
   Paper,
 } from "@mui/material";
-import io from "socket.io-client";
 
 const handleAnimationComplete = () => {
   console.log("Animation completed!");
@@ -34,25 +33,15 @@ const LoginPage = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       console.log("Đăng nhập thành công:", result.user);
-      sessionStorage.setItem("username", result.user.displayName || "User");
       navigate("/home");
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Đăng nhập với:", username, password);
-    sessionStorage.setItem("username", username);
-
-    // Kết nối và đăng ký với WebSocket server
-    const socket = io("http://localhost:4000", {
-      transports: ["websocket"],
-    });
-
-    socket.emit("register", { username: username });
-
     navigate("/home");
   };
 
@@ -83,7 +72,7 @@ const LoginPage = () => {
           style={{ width: "100px", marginBottom: "20px" }}
         />
         <Typography component="h1" variant="h5">
-          Hello! Good Morning
+          Hello!
         </Typography>
         <Box
           component="form"
@@ -179,22 +168,23 @@ const LoginPage = () => {
         />
         <Box sx={{ position: "relative", zIndex: 1 }}>
           <BlurText
-            text="wellcome to Fsocial network"
+            text="Welcome to F-Social Network"
             delay={150}
             animateBy="words"
             direction="top"
             onAnimationComplete={handleAnimationComplete}
             className="text-4xl mb-8"
-            style={{ color: "black" }} // Set text color to black
+            style={{ color: "black", fontWeight: "bold" }} // Set text color to black and bold
           />
           <GradientText
             colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
             animationSpeed={3}
             showBorder={false}
-            className="custom-class"
+            className="custom-class text-2xl"
           >
-            This is a social networking site for students organized by the group
-            of 7 SWD392 subjects of Mr. CHIENNV
+            This is a Social Networking Platform for Students
+            <br />
+            Organized by the Group 7 - SWD392 of Mr. CHIENNV
           </GradientText>
         </Box>
       </Box>
