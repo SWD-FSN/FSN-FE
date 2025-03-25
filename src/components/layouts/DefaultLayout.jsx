@@ -1,27 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Footer from '../footer/Footer';
+import Footer from "../footer/Footer";
+import { Toaster } from "react-hot-toast";
+import NotificationList from "../Notification/NotificationList";
 
-function DefaultLayout({children, headerTitle}) {
-    const [showCreatePostForm, setShowCreatePostForm] = useState(false);
+function DefaultLayout({ children, headerTitle }) {
+  const [showCreatePostForm, setShowCreatePostForm] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-    const handleCreateClick = () => {
-        setShowCreatePostForm(true);
-    };
+  const handleCreateClick = () => {
+    setShowCreatePostForm(true);
+  };
 
-    const handleCloseForm = () => {
-        setShowCreatePostForm(false);
-    };
+  const handleCloseForm = () => {
+    setShowCreatePostForm(false);
+  };
 
-    return (
+  return (
+    <>
+      <Toaster position="top-right" />
       <div className="flex flex-col h-screen bg-white">
         <div className="flex flex-1">
-          {/* Sidebar */}
-          <Sidebar onCreateClick={handleCreateClick} />
+          <Sidebar
+            onCreateClick={handleCreateClick}
+            unreadCount={unreadCount}
+            onNotificationClick={() => setShowNotifications(true)}
+          />
 
-          {/* Main Content */}
           <div className="flex-1 flex flex-col">
-            {/* Feed */}
             <div className="flex-1 border-r border-gray-200 overflow-y-auto">
               {headerTitle && (
                 <header className="sticky top-0 bg-white p-4 border-b border-gray-200 z-10">
@@ -31,36 +38,53 @@ function DefaultLayout({children, headerTitle}) {
                 </header>
               )}
 
-              {/* Posts */}
               {children}
             </div>
           </div>
-
-          {/* Login Sidebar */}
-          <LoginSidebar />
         </div>
 
-        {/* Footer */}
         <Footer />
+
+        {showNotifications && (
+          <NotificationList
+            isOpen={showNotifications}
+            onClose={() => {
+              setShowNotifications(false);
+              setUnreadCount(0); // Reset unread count when closing
+            }}
+          />
+        )}
 
         {/* Create Post Form */}
         {showCreatePostForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white p-4 rounded-lg shadow-lg">
               <h2 className="text-xl font-semibold mb-4">Create Post</h2>
-              <textarea className="w-full p-2 border border-gray-300 rounded-lg mb-4" rows="4" placeholder="What's on your mind?"></textarea>
+              <textarea
+                className="w-full p-2 border border-gray-300 rounded-lg mb-4"
+                rows="4"
+                placeholder="What's on your mind?"
+              ></textarea>
               <div className="flex justify-end space-x-2">
-                <button onClick={handleCloseForm} className="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg">Post</button>
+                <button
+                  onClick={handleCloseForm}
+                  className="px-4 py-2 bg-gray-200 rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg">
+                  Post
+                </button>
               </div>
             </div>
           </div>
         )}
       </div>
-    );
+    </>
+  );
 }
 
-function Sidebar({ onCreateClick }) {
+function Sidebar({ onCreateClick, unreadCount, onNotificationClick }) {
   const navItems = [
     {
       icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
@@ -77,8 +101,8 @@ function Sidebar({ onCreateClick }) {
       label: "Message",
       link: "/message",
     },
-    { 
-      icon: "M12 4v16m8-8H4", 
+    {
+      icon: "M12 4v16m8-8H4",
       label: "Create",
       onClick: onCreateClick,
     },
@@ -152,6 +176,30 @@ function Sidebar({ onCreateClick }) {
           </svg>
         </button>
       </div>
+      <button
+        onClick={onNotificationClick}
+        className="p-2 hover:bg-gray-100 rounded-md relative"
+        title="Notifications"
+      >
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+          />
+        </svg>
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            {unreadCount}
+          </span>
+        )}
+      </button>
     </div>
   );
 }

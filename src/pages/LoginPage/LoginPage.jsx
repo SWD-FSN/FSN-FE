@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
-import { IoMdClose } from 'react-icons/io';
-import { auth, googleProvider } from '../../firebase';
-import { signInWithPopup } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+import { IoMdClose } from "react-icons/io";
+import { auth, googleProvider } from "../../firebase";
+import { signInWithPopup } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import BlurText from "../../blocks/TextAnimations/BlurText/BlurText";
 import GradientText from "../../blocks/TextAnimations/GradientText/GradientText";
 import Iridescence from "../../blocks/Backgrounds/Iridescence/Iridescence.jsx";
-import FsocialLogo from '../../assets/images/Fsocial.jpg';
-import BackgroundImage from '../../assets/images/loginpicture.jpg'; // Import your local image
+import FsocialLogo from "../../assets/images/Fsocial.jpg";
+import BackgroundImage from "../../assets/images/loginpicture.jpg"; // Import your local image
 import {
   Container,
   Box,
@@ -18,59 +18,79 @@ import {
   Link,
   IconButton,
   Paper,
-} from '@mui/material';
+} from "@mui/material";
+import io from "socket.io-client";
 
 const handleAnimationComplete = () => {
-  console.log('Animation completed!');
+  console.log("Animation completed!");
 };
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      console.log('Đăng nhập thành công:', result.user);
-      navigate('/home');
+      console.log("Đăng nhập thành công:", result.user);
+      sessionStorage.setItem("username", result.user.displayName || "User");
+      navigate("/home");
     } catch (error) {
-      console.error('Lỗi đăng nhập:', error);
+      console.error("Lỗi đăng nhập:", error);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Đăng nhập với:', username, password);
-    navigate('/home');
+    console.log("Đăng nhập với:", username, password);
+    sessionStorage.setItem("username", username);
+
+    // Kết nối và đăng ký với WebSocket server
+    const socket = io("http://localhost:4000", {
+      transports: ["websocket"],
+    });
+
+    socket.emit("register", { username: username });
+
+    navigate("/home");
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh' }}>
+    <Box sx={{ display: "flex", height: "100vh" }}>
       <Box
         component={Paper}
         elevation={6}
         square
         sx={{
           flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
           p: 4,
         }}
       >
         <IconButton
-          sx={{ alignSelf: 'flex-end' }}
-          onClick={() => navigate('/')}
+          sx={{ alignSelf: "flex-end" }}
+          onClick={() => navigate("/")}
         >
           <IoMdClose size={24} />
         </IconButton>
-        <img src={FsocialLogo} alt="Fsocial Logo" style={{ width: '100px', marginBottom: '20px' }} />
+        <img
+          src={FsocialLogo}
+          alt="Fsocial Logo"
+          style={{ width: "100px", marginBottom: "20px" }}
+        />
         <Typography component="h1" variant="h5">
           Hello! Good Morning
         </Typography>
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, width: '100%', maxWidth: '400px' }}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={handleSubmit}
+          sx={{ mt: 1, width: "100%", maxWidth: "400px" }}
+        >
           <TextField
             margin="normal"
             required
@@ -95,7 +115,7 @@ const LoginPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Link href="#" variant="body2">
               Forgot password?
             </Link>
@@ -108,7 +128,14 @@ const LoginPage = () => {
           >
             Login
           </Button>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', my: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              my: 2,
+            }}
+          >
             <Typography variant="body2" color="textSecondary">
               OR
             </Typography>
@@ -126,14 +153,14 @@ const LoginPage = () => {
       <Box
         sx={{
           flex: 1,
-          position: 'relative',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: 'white',
-          textAlign: 'center',
+          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          color: "white",
+          textAlign: "center",
           p: 4,
-          overflow: 'hidden',
+          overflow: "hidden",
         }}
       >
         <Iridescence
@@ -141,9 +168,16 @@ const LoginPage = () => {
           mouseReact={false}
           amplitude={0.1}
           speed={1.0}
-          sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: -1 }}
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: -1,
+          }}
         />
-        <Box sx={{ position: 'relative', zIndex: 1 }}>
+        <Box sx={{ position: "relative", zIndex: 1 }}>
           <BlurText
             text="wellcome to Fsocial network"
             delay={150}
@@ -151,7 +185,7 @@ const LoginPage = () => {
             direction="top"
             onAnimationComplete={handleAnimationComplete}
             className="text-4xl mb-8"
-            style={{ color: 'black' }} // Set text color to black
+            style={{ color: "black" }} // Set text color to black
           />
           <GradientText
             colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
@@ -159,7 +193,8 @@ const LoginPage = () => {
             showBorder={false}
             className="custom-class"
           >
-            This is a social networking site for students organized by the group of 7 SWD392 subjects of Mr. CHIENNV
+            This is a social networking site for students organized by the group
+            of 7 SWD392 subjects of Mr. CHIENNV
           </GradientText>
         </Box>
       </Box>
