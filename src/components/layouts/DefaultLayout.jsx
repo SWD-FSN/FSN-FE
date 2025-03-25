@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import Footer from '../footer/Footer';
+import DraggableDialog from '../popupBlog/Blog';
+
 
 function DefaultLayout({children, headerTitle}) {
     const [showCreatePostForm, setShowCreatePostForm] = useState(false);
@@ -45,16 +47,7 @@ function DefaultLayout({children, headerTitle}) {
 
         {/* Create Post Form */}
         {showCreatePostForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <h2 className="text-xl font-semibold mb-4">Create Post</h2>
-              <textarea className="w-full p-2 border border-gray-300 rounded-lg mb-4" rows="4" placeholder="What's on your mind?"></textarea>
-              <div className="flex justify-end space-x-2">
-                <button onClick={handleCloseForm} className="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg">Post</button>
-              </div>
-            </div>
-          </div>
+          <DraggableDialog showCreatePostForm={showCreatePostForm} setShowCreatePostForm={setShowCreatePostForm} />
         )}
       </div>
     );
@@ -73,7 +66,7 @@ function Sidebar({ onCreateClick }) {
       link: "/search",
     },
     {
-      icon: "M2 8l10 6 10-6m-10 6v8",
+      icon: "M2 8l10 6 M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.264 0-2.474-.197-3.596-.564a1 1 0 00-.8.1l-3.528 2.117a1 1 0 01-1.4-1.075l.684-3.42a1 1 0 00-.27-.874A7.993 7.993 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z",
       label: "Message",
       link: "/message",
     },
@@ -85,6 +78,7 @@ function Sidebar({ onCreateClick }) {
     {
       icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
       label: "Likes",
+      link: "/likes",
     },
     {
       icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",

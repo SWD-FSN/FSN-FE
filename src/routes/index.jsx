@@ -6,6 +6,7 @@ import SearchPage from '../pages/SearchPage/SearchPage';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import ChatPage from '../pages/ChatPage/ChatPage';
 import ProfileSettings from '../pages/ProfileSettings/ProfileSettings';
+import LikedPostsPage from '../pages/LikedPostsPage/LikedPostsPage';
 
 export const router = createBrowserRouter([
   {
@@ -43,5 +44,13 @@ export const router = createBrowserRouter([
   {
     path: "/profile-settings",
     element: <ProfileSettings />,
+  },
+  {
+    path: "/likes",
+    element: (
+      <DefaultLayout headerTitle="Bài viết đã thích">
+        <LikedPostsPage />
+      </DefaultLayout>
+    ),
   },
 ]);
