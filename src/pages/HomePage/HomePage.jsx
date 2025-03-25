@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import styles from './HomePage.module.css'; // Import CSS
+import React, { useEffect, useState } from "react";
+import CommentModal from "../../components/CommentModal/CommentModal";
+import { useSocket } from "../../contexts/SocketContext";
 
 // Hình ảnh fallback/placeholder
 const FALLBACK_IMAGE =
@@ -7,13 +8,17 @@ const FALLBACK_IMAGE =
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const currentUser = sessionStorage.getItem("username") || "Anonymous";
+  const { sendNotification } = useSocket();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await fetch("http://localhost:8080/posts");
         const data = await response.json();
-        
+
         if (Array.isArray(data.data)) {
           setPosts(data.data);
         } else {
@@ -23,9 +28,69 @@ function HomePage() {
         console.error("Lỗi khi lấy dữ liệu:", error);
       }
     };
-
     fetchPosts();
   }, []);
+
+  const handleLike = (postId) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.post_id === postId) {
+          if (post.username !== currentUser) {
+            sendNotification({
+              recipient: post.username,
+              sender: currentUser,
+              title: "New Like",
+              body: `${currentUser} đã thích bài viết của bạn`,
+              type: "like",
+              postId: postId,
+            });
+          }
+          return { ...post, like_amount: post.like_amount + 1 };
+        }
+        return post;
+      })
+    );
+  };
+
+  const handleOpenComments = (postId) => {
+    const post = posts.find((p) => p.post_id === postId);
+    setSelectedPost(post);
+    setShowCommentModal(true);
+  };
+
+  const handleAddComment = (postId, commentText, commentAuthor) => {
+    const now = new Date();
+    const timestamp = `${now.toLocaleTimeString()} ${now.toLocaleDateString()}`;
+
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.post_id === postId) {
+          const updatedPost = {
+            ...post,
+            comments: [
+              ...(post.comments || []),
+              { username: commentAuthor, text: commentText, timestamp },
+            ],
+          };
+
+          if (post.username !== currentUser) {
+            sendNotification({
+              recipient: post.username,
+              sender: currentUser,
+              title: "New Comment",
+              body: `${currentUser} commented: "${commentText.substring(
+                0,
+                30
+              )}..."`,
+            });
+          }
+
+          return updatedPost;
+        }
+        return post;
+      })
+    );
+  };
 
   // Xử lý lỗi hình ảnh
   const handleImageError = (e) => {
@@ -33,31 +98,81 @@ function HomePage() {
   };
 
   return (
-    <div className={styles.container}>
-      
-      <div className={styles.postsContainer}>
-        {Array.isArray(posts) && posts.map((post) => (
-          <article key={post.post_id} className={styles.post}>
-            <div className={styles.flexContainer}>
-              <img
-                src={post.profile_avatar}
-                alt={`${post.username}'s avatar`}
-                className={styles.avatar}
-                onError={handleImageError}
-              />
-              <div className={styles.contentContainer}>
-                <h3 className={styles.username}>{post.username}</h3>
-                <p className={styles.postContent}>{post.content}</p>
-                <div className={styles.postFooter}>
-                  <span className={styles.likes}>{post.likeAmount} likes</span>
-                  <span className={styles.comments}>3 comments</span>
-                </div>
+    <>
+      <div className="max-w-2xl mx-auto p-4">
+        {posts.map((post) => (
+          <div
+            key={post.post_id}
+            className="bg-white rounded-lg shadow mb-6 p-4"
+          >
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3">
+                {post.username?.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p className="font-medium">{post.username}</p>
+                <p className="text-gray-500 text-sm">{post.timestamp}</p>
               </div>
             </div>
-          </article>
+
+            <p className="mb-4">{post.content}</p>
+
+            <div className="flex items-center text-gray-500 border-t border-gray-200 pt-3">
+              <button
+                onClick={() => handleLike(post.post_id)}
+                className="flex items-center mr-6 hover:text-blue-500"
+              >
+                <svg
+                  className="w-5 h-5 mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+                <span>{post.like_amount} Likes</span>
+              </button>
+
+              <button
+                onClick={() => handleOpenComments(post.post_id)}
+                className="flex items-center hover:text-blue-500"
+              >
+                <svg
+                  className="w-5 h-5 mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+                <span>{post.comments?.length} Comments</span>
+              </button>
+            </div>
+          </div>
         ))}
       </div>
-    </div>
+
+      {selectedPost && (
+        <CommentModal
+          isOpen={showCommentModal}
+          onClose={() => setShowCommentModal(false)}
+          postId={selectedPost.post_id}
+          postAuthor={selectedPost.username}
+          comments={selectedPost.comments}
+          onAddComment={handleAddComment}
+        />
+      )}
+    </>
   );
 }
 
@@ -252,7 +367,7 @@ function Post({ post, onImageError }) {
                   d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                 />
               </svg>
-              <span>{comments}</span>
+              <span>{comments.length} Comments</span>
             </button>
             <button className="flex items-center mr-4">
               <svg

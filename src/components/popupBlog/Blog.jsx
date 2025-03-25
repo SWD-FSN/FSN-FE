@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Dialog, DialogContent, Avatar, TextField, IconButton, Button, Typography } from "@mui/material";
 import { Image, Gif, EmojiEmotions, LocationOn, Close } from "@mui/icons-material";
 
+
 export default function CreatePostDialog({ showCreatePostForm, setShowCreatePostForm }) {
   const [postContent, setPostContent] = React.useState("");
 
