@@ -39,73 +39,118 @@ export default function CreatePostDialog({
     console.log("No user information found in localStorage.");
   }
 
-  const handleSubmit = async () => {
-    // Lấy user info từ localStorage
-    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+  // Thêm state này vào đầu component
+const [isSubmitting, setIsSubmitting] = React.useState(false);
+const [error, setError] = React.useState(null);
 
-    if (!storedUserInfo || !storedUserInfo.user_id) {
-      console.error("User info not found in localStorage!");
-      return;
-    }
+// Hàm handleSubmit đã cập nhật
+const handleSubmit = async () => {
+  setError(null);
+  setIsSubmitting(true);
+  
+  try {
+    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+    if (!storedUserInfo?.user_id) throw new Error("User chưa xác thực");
 
     const payload = {
       author_id: storedUserInfo.user_id,
-      author_name: storedUserInfo.email,
       content: postContent,
+      attachment: selectedFile || "",
       is_private: isPrivate,
-      is_hidden: isHidden,
-      image: image,
+      is_hidden: isHidden
     };
 
+    const response = await fetch("http://localhost:8080/posts/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Tạo bài viết thất bại");
+
+    // Thành công
+    setPostContent("");
+    setSelectedFile(null);
+    setShowCreatePostForm(false);
+  } catch (err) {
+    setError(err.message);
+    console.error("Lỗi bài viết:", err);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+// Thêm hiển thị lỗi trong JSX
+{error && (
+  <Typography color="error" sx={{ mt: 2 }}>
+    Lỗi: {error}
+  </Typography>
+)}
+
+const handleFileSelect = async (event) => {
+  const file = event.target.files[0];
+  if (file) {
     try {
-      const response = await fetch("http://localhost:8080/posts/create", {
+      // 1. Upload file lên server
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("http://localhost:4000/upload", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Post created successfully:", data);
-        setPostContent(""); // Clear the input field
-        setShowCreatePostForm(false); // Close the dialog
+        setSelectedFile(data.fileUrl);
+        console.log("File URL:", data.fileUrl);
+
+        // 2. Lấy thông tin user từ localStorage
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        if (!userInfo || !userInfo.user_id) {
+          throw new Error("User information not found");
+        }
+
+        // 3. Tạo payload cho bài post
+        const payload = {
+          author_id: userInfo.user_id,
+          content: "Nội dung bài post", // Thay bằng state của bạn
+          attachment: data.fileUrl,     // URL từ service upload
+          // is_private: false,           // Có thể thay bằng state
+          // is_hidden: false             // Có thể thay bằng state
+        };
+
+        // 4. Gửi request tạo bài post đến BE Golang
+        const postResponse = await fetch("http://localhost:8080/posts/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!postResponse.ok) {
+          const errorData = await postResponse.json();
+          throw new Error(errorData.message || "Failed to create post");
+        }
+
+        const postData = await postResponse.json();
+        console.log("Post created:", postData);
+        
+        // 5. Cập nhật UI hoặc thực hiện các thao tác sau khi tạo post
+        // Ví dụ: load lại danh sách bài post, hiển thị thông báo thành công...
+        
       } else {
-        console.error("Failed to create post:", response.statusText);
+        console.error("Upload failed:", await response.text());
       }
     } catch (error) {
-      console.error("Error creating post:", error);
+      console.error("Error:", error);
+      // Hiển thị thông báo lỗi cho người dùng
     }
-  };
-
-  const handleFileSelect = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      try {
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const response = await fetch("http://localhost:4000/upload", {
-          method: "POST",
-          body: formData,
-        });
-        console.log(response);
-        if (response.ok) {
-          const data = await response.json();
-          setSelectedFile(data.fileUrl);
-          console.log(data.fileUrl);
-          
-
-          // xử lí be với golang ... (data.fileUrl)
-        } else {
-          console.error("Failed to upload file");
-        }
-      } catch (error) {
-        console.error("Error uploading file:", error);
-      }
-    }
-  };
+  }
+};
 
   return (
     <Dialog
