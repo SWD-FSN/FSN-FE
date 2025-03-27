@@ -1,93 +1,85 @@
+import { useDebounce } from "@/hooks/useDebound";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-import React, { useState } from "react";
+export function SearchPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialQuery = searchParams.get("q") || ""; // Lấy query từ URL
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-const SearchPage = () => {
-  const [searchQuery, setSearchQuery] = useState("hik");
+  // Lấy userId từ localStorage khi component mount
+  useEffect(() => {
+    const userStorage = localStorage.getItem("userInfo");
+    if (userStorage) {
+      setUserId(JSON.parse(userStorage).user_id);
+    }
+  }, []);
 
-  // Mock data for search results based on the image
-  const searchResults = [
-    {
-      id: 1,
-      username: "gmhikaru",
-      name: "Hikaru Nakamura",
-      verified: true,
-      avatar: "/api/placeholder/40/40",
-    },
-    {
-      id: 2,
-      username: "hikariyanghuali",
-      name: "ひかり ゆきゃっふぇ",
-      verified: false,
-      avatar: "/api/placeholder/40/40",
-    },
-    {
-      id: 3,
-      username: "hikoybrand",
-      name: "Hikoybrand",
-      verified: true,
-      avatar: "/api/placeholder/40/40",
-    },
-    {
-      id: 4,
-      username: "hikmet.qazi",
-      name: "Hikmat Mammadov",
-      verified: true,
-      avatar: "/api/placeholder/40/40",
-    },
-    {
-      id: 5,
-      username: "hikoinu",
-      name: "하이코이누 Hikoinu 2017",
-      verified: false,
-      avatar: "/api/placeholder/40/40",
-    },
-    {
-      id: 6,
-      username: "hikingvibes81",
-      name: "Hiking VIBES",
-      verified: false,
-      avatar: "/api/placeholder/40/40",
-    },
-    {
-      id: 7,
-      username: "carlos.hikri",
-      name: "Carlos",
-      verified: true,
-      avatar: "/api/placeholder/40/40",
-    },
-    {
-      id: 8,
-      username: "bam_boy_725",
-      name: "Hikaru Kusano",
-      verified: false,
-      avatar: "/api/placeholder/40/40",
-    },
-    {
-      id: 9,
-      username: "hikarimoon",
-      name: "hika ･ﾟ♡･",
-      verified: false,
-      avatar: "/api/placeholder/40/40",
-    },
-    {
-      id: 10,
-      username: "hik_sita0310",
-      name: "Nayanmoni Kalita",
-      verified: false,
-      avatar: "/api/placeholder/40/40",
-    },
-  ];
+  // Cập nhật URL khi searchQuery thay đổi
+  useEffect(() => {
+    if (searchQuery) {
+      setSearchParams({ q: searchQuery });
+    } else {
+      setSearchParams({});
+    }
+  }, [searchQuery, setSearchParams]);
 
+  // Gọi API khi debouncedSearchQuery thay đổi
+  useEffect(() => {
+    if (!debouncedSearchQuery.trim() || userId === null) {
+      setUsers([]);
+      return;
+    }
+
+    setLoading(true);
+
+    fetch(
+      `http://localhost:8080/search-object/user/${userId}/keyword/${debouncedSearchQuery}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Không thể tải dữ liệu");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("📥 Nhận dữ liệu:", data);
+        setUsers(data);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error("❌ Lỗi khi fetch:", err);
+        setError("Không thể tải dữ liệu");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [debouncedSearchQuery, userId]);
+
+  const handleSelectUser = (user) => {
+    console.log("User selected:", user);
+    navigate(`/user-post/${user.user_id}`);
+  };
+
+  const handleClickEnter = (post) => {
+    console.log("post",post)
+    navigate("/post-cart-page", { state: { post } });
+  };
   return (
     <div className="flex h-screen bg-white">
-
       {/* Main content */}
       <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full">
-
         {/* Search area */}
         <div className="p-4">
           <div className="relative">
             <div className="flex items-center border border-gray-300 rounded-full p-2 bg-gray-100">
+              {/* Icon tìm kiếm */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -107,6 +99,15 @@ const SearchPage = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (users?.data?.posts?.length > 0) {
+                      handleClickEnter(users.data.posts);
+                    } else {
+                      console.warn("Không có dữ liệu để truyền!");
+                    }
+                  }
+                }}
                 className="flex-1 bg-transparent outline-none"
                 placeholder="Tìm kiếm"
               />
@@ -115,6 +116,7 @@ const SearchPage = () => {
                   onClick={() => setSearchQuery("")}
                   className="text-gray-500 mr-2"
                 >
+                  {/* Icon Xóa */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -135,42 +137,66 @@ const SearchPage = () => {
             </div>
           </div>
 
+          {/* Hiển thị lỗi */}
+          {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+
+          {/* Hiển thị trạng thái Loading */}
+          {loading && (
+            <p className="text-gray-500 text-center mt-2">Đang tìm kiếm...</p>
+          )}
+
           {/* Search results */}
           <div className="mt-4">
-            {searchResults.map((result) => (
-              <div
-                key={result.id}
-                className="flex items-center py-3 border-b border-gray-100 cursor-pointer"
-              >
-                <div className="flex-shrink-0 mr-3">
-                  <img
-                    src={result.avatar}
-                    alt={result.username}
-                    className="w-10 h-10 rounded-full"
-                  />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center">
-                    <span className="font-medium">{result.username}</span>
-                    {result.verified && (
-                      <svg
-                        className="w-4 h-4 ml-1 text-blue-500"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.7 14.7l-4-4 1.4-1.4 2.6 2.6 6.6-6.6 1.4 1.4-8 8z" />
-                      </svg>
-                    )}
-                  </div>
-                  <div className="text-gray-500 text-sm">{result.name}</div>
-                </div>
-              </div>
-            ))}
+            <div className="bg-white shadow-md rounded-lg p-4 w-full max-w-xxl mx-auto">
+              {users && users?.data?.users?.length > 0
+                ? users.data.users.map((result) => (
+                    <div
+                      onClick={() => handleSelectUser(result)} // Xử lý khi click
+                      key={result.user_id}
+                      className="flex items-center py-3 border-b border-gray-100 cursor-pointer hover:bg-gray-100 transition duration-200"
+                    >
+                      {/* Avatar */}
+                      <div className="flex-shrink-0 mr-3">
+                        <img
+                          src={result.profile_avatar ?? ""} // Placeholder nếu ảnh lỗi
+                          alt={result.username}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      </div>
+
+                      {/* Thông tin người dùng */}
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <span className="font-semibold">
+                            {result.username}
+                          </span>
+                          {result.is_friend_with_actor && (
+                            <svg
+                              className="w-4 h-4 ml-1 text-blue-500"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.7 14.7l-4-4 1.4-1.4 2.6 2.6 6.6-6.6 1.4 1.4-8 8z" />
+                            </svg>
+                          )}
+                        </div>
+                        <div className="text-gray-500 text-sm">
+                          {result.follower_amount} Followers
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : !loading && (
+                    <div className="flex items-center justify-center py-6 text-gray-400">
+                      Không có kết quả
+                    </div>
+                  )}
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default SearchPage;
