@@ -39,11 +39,32 @@ const LoginPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Đăng nhập với:", username, password);
-    navigate("/home");
+    
+    try {
+      const response = await fetch("http://localhost:8080/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+  
+      const result = await response.json();
+      console.log("Login success:", result);
+      toast.success("Login successful!");
+      navigate("/home");
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Login failed!");
+    }
   };
+  
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
@@ -105,8 +126,8 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Link href="#" variant="body2">
-              Forgot password?
+            <Link href="register" variant="body2">
+              Register Account
             </Link>
           </Box>
           <Button

@@ -18,6 +18,7 @@ export default function CreatePostDialog({ showCreatePostForm, setShowCreatePost
         animate={{ opacity: 1, y: 0 }} // Trượt lên trên
         exit={{ opacity: 0, y: 50 }} // Trượt xuống khi đóng
         transition={{ duration: 0.3, ease: "easeOut" }}
+        
       >
         <DialogContent sx={{ backgroundColor: "#1c1c1c", color: "#fff", borderRadius: 2, padding: "16px" }}>
           {/* Header */}

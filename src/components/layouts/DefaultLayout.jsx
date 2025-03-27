@@ -6,6 +6,7 @@ import NotificationList from "../Notification/NotificationList";
 import CreatePostDialog from "../popupBlog/Blog";
 
 
+
 function DefaultLayout({ children, headerTitle }) {
   const [showCreatePostForm, setShowCreatePostForm] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -68,6 +69,9 @@ function DefaultLayout({ children, headerTitle }) {
   );
 }
 
+// hàm xử lý gửi lời mời 
+
+
 function Sidebar({ onCreateClick, unreadCount, onNotificationClick }) {
   const navItems = [
     {
@@ -100,6 +104,12 @@ function Sidebar({ onCreateClick, unreadCount, onNotificationClick }) {
       label: "Profile",
       link: "/profile",
     },
+    {
+      icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14c-4.418 0-8 3.582-8 8h16c0-4.418-3.582-8-8-8zM19 12h-2v-2h-2v2h-2v2h2v2h2v-2h2v-2z",
+      label: "AddFriend",
+     
+    }
+
   ];
 
   return (

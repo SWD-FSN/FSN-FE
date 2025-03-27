@@ -7,7 +7,10 @@ import DefaultLayout from '../components/layouts/DefaultLayout';
 import ChatPage from '../pages/ChatPage/ChatPage';
 import ProfileSettings from '../pages/ProfileSettings/ProfileSettings';
 import LikedPostsPage from '../pages/LikedPostsPage/LikedPostsPage';
-
+import RegisterForm from '../pages/RegisterForm/RegisterForm';
+import GifSearch from '../components/GifSearch/GifSearch';
+import ChatBox from '../components/ChatAi/ChatAi';
+import FriendRequestsPopup from '../components/AddFriend/FriendRequest';
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -53,4 +56,31 @@ export const router = createBrowserRouter([
       </DefaultLayout>
     ),
   },
+  {
+    path: "/register",
+    element: (
+      <RegisterForm />
+    ),
+    
+  },
+  {
+    path: "/gifsearch",
+    element: (
+      <GifSearch />
+    ),
+  },
+  {
+    path: "/friendrequest",
+    element: (
+      <FriendRequestsPopup />
+    ),
+
+  },
+   
+
+  {
+    path: "/ChatBox",
+    element: (
+      <ChatBox />
+)}
 ]);
