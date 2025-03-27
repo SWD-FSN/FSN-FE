@@ -3,7 +3,7 @@ import { format } from "date-fns";
 
 function NotificationList({ isOpen, onClose }) {
   const [notifications, setNotifications] = useState([]);
-  const username = sessionStorage.getItem("username");
+  const username = localStorage.getItem("userInfo");
 
   useEffect(() => {
     if (isOpen && username) {
@@ -13,18 +13,24 @@ function NotificationList({ isOpen, onClose }) {
 
   const fetchNotifications = async () => {
     try {
+      const userData = localStorage.getItem("userInfo");
+      const userDataDecode = JSON.parse(userData);
+      const userId = userDataDecode?.user_id;
+      const apiUrl = `http://localhost:8080/notifications/user/${userId}`;
       const response = await fetch(
-        `http://localhost:4000/notifications/${username}`
+        // `http://localhost:4000/notifications/${username}`
+        apiUrl
       );
       const data = await response.json();
-      setNotifications(data);
+      setNotifications(data.data?.notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
   };
 
-  const getNotificationIcon = (title) => {
-    switch (title) {
+  const getNotificationIcon = (content) => {
+    const value = content?.includes("like") ? "New Like" : "New Comment";
+    switch (value) {
       case "New Like":
         return (
           <svg
@@ -127,17 +133,17 @@ function NotificationList({ isOpen, onClose }) {
                 className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
                   notification.read ? "bg-gray-50" : "bg-white"
                 }`}
-                onClick={() => markAsRead(notification.id)}
+                onClick={() => markAsRead(notification.notification_id)}
               >
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    {getNotificationIcon(notification.title)}
+                    {getNotificationIcon(notification.content)}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">{notification.body}</p>
+                    <p className="font-medium">{notification.content}</p>
                     <p className="text-sm text-gray-400 mt-1">
                       {format(
-                        new Date(notification.createdAt),
+                        new Date(notification.created_at),
                         "HH:mm dd/MM/yyyy"
                       )}
                     </p>
