@@ -8,6 +8,7 @@ import BlurText from "../../blocks/TextAnimations/BlurText/BlurText";
 import GradientText from "../../blocks/TextAnimations/GradientText/GradientText";
 import Iridescence from "../../blocks/Backgrounds/Iridescence/Iridescence.jsx";
 import FsocialLogo from "../../assets/images/f_social.jpg";
+
 import BackgroundImage from "../../assets/images/login_picture.jpg"; // Import your local image
 import {
   Container,
@@ -19,6 +20,11 @@ import {
   IconButton,
   Paper,
 } from "@mui/material";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { object } from "yup";
+
 
 const handleAnimationComplete = () => {
   console.log("Animation completed!");
@@ -41,7 +47,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const response = await fetch("http://localhost:8080/users/login", {
         method: "POST",
@@ -50,21 +56,32 @@ const LoginPage = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       if (!response.ok) {
         throw new Error("Login failed");
       }
-  
+
       const result = await response.json();
-      console.log("Login success:", result);
+      console.log("Login success:", result.access_token);
       toast.success("Login successful!");
+      const decodedToken = jwtDecode(result.access_token);
+      const userinfor = {
+        email: decodedToken.email,
+        role: decodedToken.role,
+        user_id: decodedToken.user_id,
+      }
+      localStorage.setItem("userInfo", JSON.stringify(userinfor));
+
+
+
+      console.log("Decoded token:", decodedToken.email);
       navigate("/home");
     } catch (error) {
       console.error("Error:", error);
       toast.error("Login failed!");
     }
   };
-  
+
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
