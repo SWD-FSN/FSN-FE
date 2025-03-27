@@ -20,7 +20,16 @@ function HomePage() {
         const data = await response.json();
 
         if (Array.isArray(data.data)) {
-          setPosts(data.data);
+          // Chuyển đổi dữ liệu từ BE để thêm attachments vào mỗi bài post
+          const processedPosts = data.data.map(post => ({
+            ...post,
+            // Giả sử attachments là array các URL hình ảnh
+            // Nếu BE trả về attachments dưới dạng string, có thể cần parse JSON
+            images: post.attachments ? 
+              (Array.isArray(post.attachments) ? post.attachments : JSON.parse(post.attachments))
+              : []
+          }));
+          setPosts(processedPosts);
         } else {
           console.error("Dữ liệu không phải là mảng:", data);
         }
@@ -51,12 +60,29 @@ function HomePage() {
       })
     );
   };
+  
 
   const handleOpenComments = (postId) => {
     const post = posts.find((p) => p.post_id === postId);
     setSelectedPost(post);
     setShowCommentModal(true);
   };
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/posts");
+        const data = await response.json();
+        console.log("Data from API:", data); // Thêm dòng này để kiểm tra
+        
+        if (Array.isArray(data.data)) {
+          setPosts(data.data);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   const handleAddComment = (postId, commentText, commentAuthor) => {
     const now = new Date();
@@ -111,11 +137,30 @@ function HomePage() {
               </div>
               <div>
                 <p className="font-medium">{post.username}</p>
-                <p className="text-gray-500 text-sm">{post.timestamp}</p>
+                <p className="text-gray-500 text-sm">
+                  {new Date(post.createdAt).toLocaleString()}
+                </p>
               </div>
             </div>
 
             <p className="mb-4">{post.content}</p>
+
+            {/* Hiển thị attachments nếu có */}
+            {post.images && post.images.length > 0 && (
+              <div className={`mt-3 ${post.images.length > 1 ? "grid grid-cols-2 gap-2" : ""}`}>
+                {post.images.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`Post attachment ${idx + 1}`}
+                    className={`rounded-md object-cover ${
+                      post.images.length === 1 ? "w-full max-h-72" : "w-full h-40"
+                    }`}
+                    onError={handleImageError}
+                  />
+                ))}
+              </div>
+            )}
 
             <div className="flex items-center text-gray-500 border-t border-gray-200 pt-3">
               <button
@@ -135,7 +180,7 @@ function HomePage() {
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                   />
                 </svg>
-                <span>{post.like_amount} Likes</span>
+                <span>{post.like_amount || 0} Likes</span>
               </button>
 
               <button
@@ -155,7 +200,7 @@ function HomePage() {
                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                   />
                 </svg>
-                <span>{post.comments?.length} Comments</span>
+                <span>{post.comments?.length || 0} Comments</span>
               </button>
             </div>
           </div>
@@ -168,7 +213,7 @@ function HomePage() {
           onClose={() => setShowCommentModal(false)}
           postId={selectedPost.post_id}
           postAuthor={selectedPost.username}
-          comments={selectedPost.comments}
+          comments={selectedPost.comments || []}
           onAddComment={handleAddComment}
         />
       )}

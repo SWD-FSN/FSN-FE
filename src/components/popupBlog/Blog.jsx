@@ -49,10 +49,12 @@ export default function CreatePostDialog({
     }
 
     const payload = {
-      author_id: storedUserInfo.user_id, // Lấy user_id từ localStorage
+      author_id: storedUserInfo.user_id,
+      author_name: storedUserInfo.email,
       content: postContent,
       is_private: isPrivate,
       is_hidden: isHidden,
+      image: image,
     };
 
     try {
@@ -93,6 +95,7 @@ export default function CreatePostDialog({
           const data = await response.json();
           setSelectedFile(data.fileUrl);
           console.log(data.fileUrl);
+          
 
           // xử lí be với golang ... (data.fileUrl)
         } else {
@@ -135,7 +138,7 @@ export default function CreatePostDialog({
             }}
           >
             <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold" }}>
-              New thread
+              New Post
             </Typography>
             <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
               <IconButton onClick={handleClose} sx={{ color: "#fff" }}>
@@ -151,7 +154,7 @@ export default function CreatePostDialog({
             <Avatar sx={{ width: 40, height: 40, marginRight: 2 }} />
             <div>
               <Typography sx={{ fontWeight: "bold", color: "#fff" }}>
-                ghetlaptrinh_189
+              {storedUserInfo?.email || "Anonymous"}
               </Typography>
               <Typography sx={{ color: "gray", fontSize: 14 }}>
                 Add a topic

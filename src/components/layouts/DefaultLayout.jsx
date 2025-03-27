@@ -197,43 +197,43 @@ function Sidebar({ onCreateClick, unreadCount, onNotificationClick }) {
       </button>
     </div>
   );
-}
+} 
 
-function LoginSidebar() {
-  return (
-    <div className="hidden md:block w-80 p-4">
-      <div className="border border-gray-200 rounded-lg p-4">
-        <h2 className="font-semibold text-lg">
-          Đăng nhập hoặc đăng ký Threads
-        </h2>
-        <p className="text-gray-600 text-sm mt-2">
-          Xem mọi người đang nói về điều gì và tham gia cuộc trò chuyện.
-        </p>
+// function LoginSidebar() {
+//   return (
+//     <div className="hidden md:block w-80 p-4">
+//       <div className="border border-gray-200 rounded-lg p-4">
+//         <h2 className="font-semibold text-lg">
+//           Đăng nhập hoặc đăng ký Threads
+//         </h2>
+//         <p className="text-gray-600 text-sm mt-2">
+//           Xem mọi người đang nói về điều gì và tham gia cuộc trò chuyện.
+//         </p>
 
-        <div className="mt-6 space-y-4">
-          <a
-            href="#"
-            className="flex items-center justify-center p-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            <svg className="w-6 h-6 mr-2" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" rx="4" fill="#000000" />
-              <path
-                d="M12 7.37v9.26M7.37 12h9.26"
-                stroke="#FFFFFF"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-            <span>Tiếp tục bằng Google</span>
-          </a>
+//         <div className="mt-6 space-y-4">
+//           <a
+//             href="#"
+//             className="flex items-center justify-center p-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+//           >
+//             <svg className="w-6 h-6 mr-2" viewBox="0 0 24 24" fill="none">
+//               <rect width="24" height="24" rx="4" fill="#000000" />
+//               <path
+//                 d="M12 7.37v9.26M7.37 12h9.26"
+//                 stroke="#FFFFFF"
+//                 strokeWidth="2"
+//                 strokeLinecap="round"
+//               />
+//             </svg>
+//             <span>Tiếp tục bằng Google</span>
+//           </a>
 
-          <button className="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-            Đăng nhập bằng tên người dùng
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+//           <button className="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+//             Đăng nhập bằng tên người dùng
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
 export default DefaultLayout;
