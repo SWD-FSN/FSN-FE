@@ -1,14 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const CommentModal = ({
   isOpen,
   onClose,
   postId,
-  postAuthor,
-  comments = [],
   onAddComment,
 }) => {
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      const fetchComments = async () => {
+        setLoading(true);
+        try {
+          const response = await fetch(`http://localhost:8080/comments/post/${postId}`);
+          const data = await response.json();
+          if (Array.isArray(data.data)) {
+            setComments(data.data);
+          } else {
+            console.error("Invalid data format:", data);
+          }
+        } catch (error) {
+          console.error("Error fetching comments:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchComments();
+    }
+  }, [isOpen, postId]);
 
   if (!isOpen) return null;
 
@@ -16,7 +38,21 @@ const CommentModal = ({
     e.preventDefault();
     if (newComment.trim()) {
       const currentUser = localStorage.getItem("username") || "Anonymous";
+      const now = new Date();
+      const timestamp = `${now.toLocaleTimeString()} ${now.toLocaleDateString()}`;
+
+      const newCommentData = {
+        username: currentUser,
+        text: newComment,
+        timestamp,
+      };
+
+      // Update the UI immediately
+      setComments((prevComments) => [...prevComments, newCommentData]);
+
+      // Call the parent handler to persist the comment
       onAddComment(postId, newComment, currentUser);
+
       setNewComment("");
       onClose();
     }
@@ -48,7 +84,9 @@ const CommentModal = ({
         </div>
 
         <div className="p-4 overflow-y-auto max-h-[50vh]">
-          {comments.length > 0 ? (
+          {loading ? (
+            <p className="text-center text-gray-500 py-4">Loading comments...</p>
+          ) : comments.length > 0 ? (
             <div className="space-y-4">
               {comments.map((comment, index) => (
                 <div key={index} className="flex space-x-3">
@@ -58,8 +96,8 @@ const CommentModal = ({
                     </div>
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">{comment.author}</p>
-                    <p className="text-gray-700">{comment.text}</p>
+                    <p className="font-medium">{comment.username}</p>
+                    <p className="text-gray-700">{comment.content || comment.text}</p> {/* Use the correct field */}
                     <p className="text-xs text-gray-500 mt-1">
                       {comment.timestamp}
                     </p>
