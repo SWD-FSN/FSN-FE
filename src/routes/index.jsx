@@ -1,14 +1,16 @@
-import { createBrowserRouter } from 'react-router-dom';
-import HomePage from '../pages/HomePage/HomePage';
-import LoginPage from '../pages/LoginPage/LoginPage';
-import ProfilePage from '../pages/ProfilePage/ProfilePage';
-import SearchPage from '../pages/SearchPage/SearchPage';
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import ChatPage from '../pages/ChatPage/ChatPage';
-import ProfileSettings from '../pages/ProfileSettings/ProfileSettings';
-import LikedPostsPage from '../pages/LikedPostsPage/LikedPostsPage';
-import RegisterForm from '../pages/RegisterForm/RegisterForm';
-import GifSearch from '../components/GifSearch/GifSearch';
+import PostCard from "@/pages/PostCard/PostCard";
+import UserPage from "@/pages/UserPage/UserPage";
+import { createBrowserRouter } from "react-router-dom";
+import GifSearch from "../components/GifSearch/GifSearch";
+import DefaultLayout from "../components/layouts/DefaultLayout";
+import ChatPage from "../pages/ChatPage/ChatPage";
+import HomePage from "../pages/HomePage/HomePage";
+import LikedPostsPage from "../pages/LikedPostsPage/LikedPostsPage";
+import LoginPage from "../pages/LoginPage/LoginPage";
+import ProfilePage from "../pages/ProfilePage/ProfilePage";
+import ProfileSettings from "../pages/ProfileSettings/ProfileSettings";
+import RegisterForm from "../pages/RegisterForm/RegisterForm";
+import SearchPage from "../pages/SearchPage/SearchPage";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -56,19 +58,26 @@ export const router = createBrowserRouter([
   },
   {
     path: "/register",
-    element: (
-      <RegisterForm />
-    ),
-    
+    element: <RegisterForm />,
   },
   {
     path: "/gifsearch",
+    element: <GifSearch />,
+  },
+  {
+    path: "/post-cart-page",
     element: (
-      <GifSearch />
+      <DefaultLayout headerTitle="Bài viết được tìm kiếm">
+        <PostCard />
+      </DefaultLayout>
     ),
   },
-  
-   
-
-  
+  {
+    path: "/user-post/:id",
+    element: (
+      <DefaultLayout headerTitle="Người dùng được tìm kiếm">
+        <UserPage />
+      </DefaultLayout>
+    ),
+  },
 ]);
