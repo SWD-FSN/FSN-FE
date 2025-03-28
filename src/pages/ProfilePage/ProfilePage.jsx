@@ -1,10 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaUser, FaCamera } from 'react-icons/fa';
 import { Box, Typography, Avatar, IconButton, Paper, Grid, Button } from '@mui/material';
 import styles from './ProfilePage.module.css';
 
 const ProfilePage = () => {
-    const [profile, setProfile] = useState({
+    // Hàm tải dữ liệu từ localStorage
+    const loadProfileFromStorage = () => {
+        const storedProfile = localStorage.getItem('profileData');
+        return storedProfile ? JSON.parse(storedProfile) : null;
+    };
+
+    const defaultProfile = {
         fullName: 'Alexandra Johnson',
         major: 'Computer Science Major',
         avatar: null,
@@ -21,9 +27,16 @@ const ProfilePage = () => {
         groupsJoined: 5,
         eventsFollowed: 3,
         opportunitiesFound: 2
-    });
+    };
 
+    const [profile, setProfile] = useState(loadProfileFromStorage() || defaultProfile);
     const fileInputRef = useRef(null);
+    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    // Cập nhật localStorage mỗi khi profile thay đổi
+    useEffect(() => {
+        localStorage.setItem('profileData', JSON.stringify(profile));
+    }, [profile]);
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
@@ -79,7 +92,7 @@ const ProfilePage = () => {
                             />
                         </Box>
 
-                        <Typography variant="h5">{profile.fullName}</Typography>
+                        <Typography variant="h5">{storedUserInfo?.email}</Typography>
                         <Typography variant="subtitle1">{profile.major}</Typography>
 
                         {/* Buttons */}
